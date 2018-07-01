@@ -1,6 +1,7 @@
 package com.liwenpeng.companyproject.base;
 
 import android.app.Activity;
+import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -21,9 +22,18 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.liwenpeng.companyproject.R;
+import com.liwenpeng.companyproject.util.ClickUtils;
 import com.liwenpeng.companyproject.util.KeyboardUtils;
 import com.liwenpeng.companyproject.util.StatusBarUtil;
 import com.liwenpeng.companyproject.util.ToastUtils;
+import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 
 /**
@@ -32,61 +42,128 @@ import com.liwenpeng.companyproject.util.ToastUtils;
  * @describe Activity基类
  */
 
-public abstract class BaseActivity extends AppCompatActivity {
-    protected Context mContext;
-    Toast mToast;
-    protected ProgressDialog waitDialog;
+public abstract class BaseActivity<V extends BaseView ,P extends BasePresenter<V>> extends RxAppCompatActivity {
+
+    public final String CurrentTAG = getClass().getSimpleName();
+
     private boolean isHideStatuBar = true;
 
+    private P mPresenter;
+    private V mView;
+    private Unbinder bind;
+
+    public P getPresenter() {
+        return mPresenter;
+    }
+
+    public V getView() {
+        return mView;
+    }
+
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getLayoutId()!= 0){
+            setContentView(getLayoutId());
+        }
+        //强制竖屏
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        mContext = this;
-       // EventBus.getDefault().register(this);
-        initViews();
-        initData();
-        initListener();
+Log.d("lwp","currenttag:"+CurrentTAG);
+        ButterKnife.bind(this);
+        bind = ButterKnife.bind(this);
+        if (mPresenter == null){
+            mPresenter = createPresenter();
+        }
+        if (mView == null){
+            mView = createView();
+        }
+        if (mPresenter != null && mView != null){
+            mPresenter.attachView(mView);
+        }
+
         setLayout();
-        //setLayout();
+        EventBus.getDefault().register(this);
+        initView();
+        initData();
+
+    }
+
+    /**
+     * 视图的初始化
+     * */
+    public abstract void initData();
+    public abstract void initView();
+
+    /**
+     * 视图布局
+     * */
+    public  abstract int getLayoutId();
+
+    /**
+     * Presenter和View接口
+     * */
+    public abstract P createPresenter();
+    public abstract V createView();
+
+    public void LogD(String msg){
+        if (BaseApplication.isIsDebugMode()){
+            Log.d(CurrentTAG,msg);
+        }
+    }
+    public void LogE(String msg){
+        if (BaseApplication.isIsDebugMode()){
+            Log.e(CurrentTAG,msg);
+        }
+    }
+    /**
+     * 吐司展示
+     * */
+    public void showToast(String msg){
+        ToastUtils.showShort(msg);
     }
 
     @Override
     protected void onDestroy() {
-      //  EventBus.getDefault().unregister(this);
-       // OkGo.cancelTag(OkGo.getInstance().getOkHttpClient(), this);
         super.onDestroy();
-    }
-
-    protected abstract int getLayoutId();
-
-    protected void initViews() {
-        if (getLayoutId() != 0)
-            setContentView(getLayoutId());
-
-    }
-
-    protected void initData() {
-    }
-
-    protected void initListener() {
-
-    }
-
-    public Toast toast(CharSequence toast) {
-//        @SuppressLint("ShowToast") Toast t = Toast.makeText(this, toast, Toast.LENGTH_SHORT);
-        if (mToast == null) {
-            mToast = Toast.makeText(this, toast, Toast.LENGTH_SHORT);
-        } else {
-            mToast.setText(toast);
+        if (mPresenter != null){
+            mPresenter.deTachView();
         }
-        mToast.show();
-        return mToast;
+        bind.unbind();
+        EventBus.getDefault().unregister(this);
     }
 
-    public void snake(CharSequence msg) {
-        Snackbar.make(findViewById(android.R.id.content), msg, Snackbar.LENGTH_SHORT).show();
+    /**
+     * 是否快速点击
+     * 防止过快点击造成多次事件执行
+     * */
+    public Boolean IsFastClick(){
+        return ClickUtils.isFastClick();
     }
+
+    public void setLayout() {
+        //  setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        //  getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        if (isHideStatuBar) {
+            StatusBarUtil.transparencyBar(this);
+//            StatusBarUtil.setStatusBarColor(this, R.color.color_039aff);
+        } else {
+            //透明状态栏
+            // StatusBarUtil.transparencyBar(this);
+            StatusBarUtil.StatusBarLightMode2(BaseActivity.this);
+        }
+        /**
+         * 设置状态栏字体颜色为白色
+         */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Window window = getWindow();
+            //  window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//            window.setStatusBarColor(getResources().getColor(R.color.color_039aff));
+             window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
+    }
+
+
+
 
     /**
      * 隐藏软键盘
@@ -116,108 +193,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         KeyboardUtils.showSoftInput(v);
     }
 
-    protected void openActivity_(Class<?> cls) {
-        hideSoftKeyboard();
-        Intent i = new Intent(mContext, cls);
-        startActivity(i);
-    }
-
-    protected void openActivity(Class<?> cls, Bundle bundle) {
-        Intent i = new Intent(mContext, cls);
-        i.putExtras(bundle);
-        startActivity(i);
-    }
-
-    protected void openActivityForResult(Class<?> cls, int requestCode) {
-        Intent i = new Intent(mContext, cls);
-        startActivityForResult(i, requestCode);
-    }
-
-    protected void openActivityForResult(Class<?> cls, int requestCode, Bundle bundle) {
-        Intent i = new Intent(mContext, cls);
-        i.putExtras(bundle);
-        startActivityForResult(i, requestCode);
-    }
-
-    public void openActivity(Class<? extends Activity> clazz) {
-        Intent intent = new Intent(this, clazz);
-        startActivity(intent);
-    }
-
-    public void showToast(CharSequence c) {
-        ToastUtils.showShort(c);
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-            View view = getCurrentFocus();
-           /* if (KeyBoardUtils.isShouldHideInput(view, ev)) {
-                KeyBoardUtils.hideSoftInput(this, view.getWindowToken());
-            }*/
-        }
-        return super.dispatchTouchEvent(ev);
-    }
-
-    public void setLoading(boolean isLoading) {
-        try {
-            if (isLoading) {
-                if (waitDialog == null || !waitDialog.isShowing()) {
-                    waitDialog = new ProgressDialog(BaseActivity.this, R.style.MyDialogStyleBottom);
-                    waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    waitDialog.setCanceledOnTouchOutside(false);
-                    ImageView view = new ImageView(BaseActivity.this);
-                    view.setLayoutParams(new ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.WRAP_CONTENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT));
-                    Animation loadAnimation = AnimationUtils.loadAnimation(
-                            BaseActivity.this, R.anim.rotate);
-                    view.startAnimation(loadAnimation);
-                    loadAnimation.start();
-                    view.setImageResource(R.mipmap.loading);
-                    waitDialog.show();
-
-                    waitDialog.setContentView(view);
-                }
-            } else {
-                if (waitDialog != null && waitDialog.isShowing()) {
-                    waitDialog.dismiss();
-                    waitDialog = null;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Called in Android UI's main thread
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void onMessage(String event) {
-//        if (event.equals("login")) {
-//            finish();
-//        }
-//    }
-
-
-    public void setLayout() {
-        //  setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        //  getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        if (isHideStatuBar) {
-            StatusBarUtil.transparencyBar(this);
-//            StatusBarUtil.setStatusBarColor(this, R.color.color_039aff);
-        } else {
-            //透明状态栏
-            // StatusBarUtil.transparencyBar(this);
-            StatusBarUtil.StatusBarLightMode2(BaseActivity.this);
-        }
-        /**
-         * 设置状态栏字体颜色为白色
-         */
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Window window = getWindow();
-            //  window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//            window.setStatusBarColor(getResources().getColor(R.color.color_039aff));
-            // window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessage(String event) {
+        if (event.equals("login")) {
+            finish();
         }
     }
 }
