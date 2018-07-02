@@ -1,5 +1,7 @@
 package com.liwenpeng.companyproject.activity;
 
+import android.Manifest;
+
 import com.liwenpeng.companyproject.R;
 import com.liwenpeng.companyproject.base.BaseActivity;
 import com.liwenpeng.companyproject.base.BaseBean;
@@ -9,6 +11,9 @@ import com.liwenpeng.companyproject.http.Api;
 import com.liwenpeng.companyproject.model.HomeResponseBean;
 import com.liwenpeng.companyproject.util.CommonObservableTransformer;
 import com.liwenpeng.companyproject.util.ToastUtils;
+import com.tbruyelle.rxpermissions2.Permission;
+import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import java.util.List;
 
@@ -46,7 +51,22 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initView() {
-
+        Disposable subscribe = new RxPermissions(this).requestEach(Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_FINE_LOCATION).compose(this.<Permission>bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new Consumer<Permission>() {
+            @Override
+            public void accept(Permission permission) throws Exception {
+                if (permission.granted) {
+                    showToast("权限申请成功");
+                } else if (permission.shouldShowRequestPermissionRationale) {
+                    showToast("用户拒绝该权限");
+                } else {
+                    showToast("用户拒绝改权限，请在设置里进行打开，否则影响正常使用");
+                }
+            }
+        });
     }
 
     @Override

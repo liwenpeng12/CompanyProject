@@ -1,7 +1,12 @@
 package com.liwenpeng.companyproject.http;
 
+import com.franmontiel.persistentcookiejar.ClearableCookieJar;
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.liwenpeng.companyproject.BuildConfig;
+import com.liwenpeng.companyproject.base.BaseApplication;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -46,6 +51,9 @@ public class Api {
                 loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
                 builder.addInterceptor(loggingInterceptor);
             }
+            ClearableCookieJar cookieJar =
+                    new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(BaseApplication.getmContext()));
+            builder.cookieJar(cookieJar);
             /**
              * 拦截器
              * */

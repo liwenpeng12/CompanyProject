@@ -1,8 +1,11 @@
 package com.liwenpeng.companyproject.base;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.liwenpeng.companyproject.util.Utils;
+
+import cn.jpush.android.api.JPushInterface;
 
 /**
  * liwenpeng
@@ -13,13 +16,23 @@ import com.liwenpeng.companyproject.util.Utils;
 public class BaseApplication extends Application {
 
     private static boolean isDebugMode = true;
+    private static Context mContext;
+
     @Override
     public void onCreate() {
         super.onCreate();
         Utils.init(this);
+        JPushInterface.setDebugMode(true);
+        JPushInterface.init(this);
+        mContext = getApplicationContext();
     }
 
     public static boolean isIsDebugMode() {
         return isDebugMode;
     }
+    public static Context getmContext(){
+        return mContext;
+    }
+
+
 }
