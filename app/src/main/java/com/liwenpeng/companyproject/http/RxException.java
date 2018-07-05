@@ -14,7 +14,7 @@ import io.reactivex.functions.Consumer;
  * liwenpeng
  * 2018/7/2 23:35
  * CompanyProject
- * Descrobe:
+ * Descrobe:异常处理
  */
     public class RxException<T extends Throwable> implements Consumer<T> {
 

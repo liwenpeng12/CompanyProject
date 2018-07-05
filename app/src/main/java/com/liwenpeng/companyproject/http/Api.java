@@ -46,14 +46,15 @@ public class Api {
             builder.connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
             builder.readTimeout(DEFAULT_READTIMEOUT,TimeUnit.SECONDS);
             //日志拦截器
-            if (BuildConfig.DEBUG){
-                HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-                loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-                builder.addInterceptor(loggingInterceptor);
-            }
+//            if (BuildConfig.DEBUG){
+//                HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+//                loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+//                builder.addInterceptor(loggingInterceptor);
+//            }
             ClearableCookieJar cookieJar =
                     new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(BaseApplication.getmContext()));
             builder.cookieJar(cookieJar);
+            builder.addInterceptor(new HnRequestLogInterceptor());
             /**
              * 拦截器
              * */
