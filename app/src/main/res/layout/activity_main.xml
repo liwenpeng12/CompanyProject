@@ -1,15 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
- <com.classic.common.MultipleStatusView
+ <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/multiple_status_view"
+        android:id="@+id/rl_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+>
+<!---   android:id="@+id/multiple_status_view"
         app:loadingView="@layout/custom_loading_view"
         app:emptyView="@layout/custom_empty_view"
         app:errorView="@layout/custom_error_view"
         app:noNetworkView="@layout/custom_no_network_view"
-        app:contentView="@layout/main_content">
+        app:contentView="@layout/main_content"-->
+ <android.support.v4.view.ViewPager
+     android:id="@+id/vp_main"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"/>
 
-</com.classic.common.MultipleStatusView>
+
+ <RadioGroup
+     android:id="@+id/main_rg"
+     android:layout_width="match_parent"
+     android:orientation="horizontal"
+     android:layout_alignParentBottom="true"
+     android:clipChildren="false"
+     android:background="@android:color/holo_blue_dark"
+     android:layout_height="50dp">
+
+  <RadioButton
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1"
+      android:gravity="center"
+      android:button="@null"
+      android:text="体系"/>
+  <RadioButton
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1"
+      android:gravity="center"
+      android:button="@null"
+      android:layout_marginRight="40dp"
+      android:text="导航"/>
+  <RadioButton
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:gravity="center"
+      android:layout_weight="1"
+      android:button="@null"
+      android:layout_marginLeft="40dp"
+      android:text="项目"/>
+  <RadioButton
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:gravity="center"
+      android:layout_weight="1"
+      android:button="@null"
+
+      android:text="设置"/>
+ </RadioGroup>
+ <Button
+     android:layout_width="70dp"
+     android:layout_height="70dp"
+     android:layout_alignParentBottom="true"
+     android:layout_centerHorizontal="true"
+     android:background="@drawable/home_bg_shape"
+     android:text="首页"/>
+
+</RelativeLayout>
 

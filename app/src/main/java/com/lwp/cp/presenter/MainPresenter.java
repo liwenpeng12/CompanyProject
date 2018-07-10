@@ -42,46 +42,6 @@ public class MainPresenter extends BasePresenter<MainnView> {
 
     @Override
     protected void initData() {
-        activityLifeCycle = getView().getActivityLifeCycle();
-        getData();
+        getView().onLoading();
     }
-
-    private void getData() {
-
-        if (NetUtil.isNetworkConnected(BaseApplication.getmContext())) {
-            getView().onGetting(Constant.LOADINGVIEW);
-            Observable<BaseBean<HomeResponseBean>> baseBeanObservable =
-                    Api.getApi().getHomeArtical("0").subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-            Observable<BannerResponse> bannerResponseObservable =
-                    Api.getApi().getBanner().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-            Disposable subscribe = Observable.zip(baseBeanObservable, bannerResponseObservable,
-                    new BiFunction<BaseBean<HomeResponseBean>, BannerResponse, ZipBannerArticalInfo>() {
-                        @Override
-                        public ZipBannerArticalInfo apply(BaseBean<HomeResponseBean> homeResponseBeanBaseBean, BannerResponse bannerResponse) throws Exception {
-                            return new ZipBannerArticalInfo(homeResponseBeanBaseBean, bannerResponse);
-                        }
-                    }).observeOn(AndroidSchedulers.mainThread()).doOnNext(new Consumer<ZipBannerArticalInfo>() {
-                @Override
-                public void accept(ZipBannerArticalInfo zipBannerArticalInfo) throws Exception {
-
-                }
-            }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<ZipBannerArticalInfo>() {
-                @Override
-                public void accept(ZipBannerArticalInfo zipBannerArticalInfo) throws Exception {
-                    getView().onGetArticalSuccess(zipBannerArticalInfo.getHomeResponseBean());
-                    getView().onGetBannerSuccess(zipBannerArticalInfo.getBannerResponse());
-                }
-            }, new Consumer<Throwable>() {
-                @Override
-                public void accept(Throwable throwable) throws Exception {
-                    getView().onGetFailed(Constant.ERRORVIEW);
-                }
-            });
-
-        }else {
-            getView().onGetFailed(Constant.NONETVIEW);
-        }
-    }
-
-
 }

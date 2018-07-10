@@ -13,6 +13,11 @@ import com.lwp.cp.util.ClickUtils;
 import com.lwp.cp.util.ToastUtils;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
+import org.greenrobot.eventbus.EventBus;
+
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 /**
  * liwenpeng
  * 2018/6/30 17:16
@@ -25,6 +30,7 @@ public abstract class BaseFragment<P extends BasePresenter> extends RxFragment{
     private Context mContext;
     public  final String CurrentTAG = getClass().getSimpleName();
     private boolean isShow = false;
+    private Unbinder bind;
 
     @Override
     public void onAttach(Context context) {
@@ -36,22 +42,36 @@ public abstract class BaseFragment<P extends BasePresenter> extends RxFragment{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         isShow = true;
+
         View view = inflater.inflate(getLayoutId(), container, false);
+        bind = ButterKnife.bind(this, view);
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if (mPresenter == null){
+            mPresenter = createPresenter();
+        }
+        if (mPresenter != null ){
+            mPresenter.attachView(this);
+        }
+        if (mPresenter != null ){
+            mPresenter.initData();
+        }
         if (getUserVisibleHint()){
             initData();
         }
     }
 
+    protected abstract P createPresenter();
+
+
     /**
      * 数据初始化
      * */
-      void initData(){};
+    public   void initData(){};
 
     /**
      * 布局视图
@@ -85,5 +105,11 @@ public abstract class BaseFragment<P extends BasePresenter> extends RxFragment{
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        bind.unbind();
     }
 }

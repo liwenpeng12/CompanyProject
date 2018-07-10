@@ -14,10 +14,6 @@ import java.util.List;
  * Descrobe:
  */
 public interface MainnView {
+    void  onLoading();
 
-   void onGetting(int type);
-   void onGetFailed(int type);
-   void onGetBannerSuccess(BannerResponse responseList);
-    void onGetArticalSuccess(BaseBean<HomeResponseBean> responseList);
-   LifecycleProvider getActivityLifeCycle();
 }
