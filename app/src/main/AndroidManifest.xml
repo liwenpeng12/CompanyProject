@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.liwenpeng.companyproject">
+    package="com.lwp.cp">
 
-    <!--极光推送必备 start-->
+    <!-- 极光推送必备 start -->
     <permission
-        android:name="com.liwenpeng.companyproject.permission.JPUSH_MESSAGE"
+        android:name="com.lwp.cp.permission.JPUSH_MESSAGE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -14,9 +15,9 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <!--极光推送必备 end-->
+    <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- 极光推送必备 end -->
     <application
         android:name=".base.BaseApplication"
         android:allowBackup="true"
@@ -25,17 +26,19 @@
         android:roundIcon="@drawable/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.SplashActivity"
+        <activity
+            android:name=".activity.SplashActivity"
             android:theme="@style/ThemeSplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-        <activity android:name=".activity.MainActivity"/>
-        <activity android:name=".activity.GuideActivity"/>
+        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.GuideActivity" />
+        <activity android:name=".activity.LoginActivity" />
+        <activity android:name=".activity.RegisterActivity"/>
     </application>
 
 </manifest>
