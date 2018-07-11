@@ -9,19 +9,19 @@ import com.lwp.cp.base.BaseBean;
  * Descrobe:
  */
 public class ZipBannerArticalInfo {
-    private BaseBean<HomeResponseBean> homeResponseBean;
+    private HomeResponseBean homeResponseBean;
     private BannerResponse bannerResponse;
 
-    public ZipBannerArticalInfo(BaseBean<HomeResponseBean> homeResponseBean, BannerResponse bannerResponse) {
+    public ZipBannerArticalInfo(HomeResponseBean homeResponseBean, BannerResponse bannerResponse) {
         this.homeResponseBean = homeResponseBean;
         this.bannerResponse = bannerResponse;
     }
 
-    public BaseBean<HomeResponseBean> getHomeResponseBean() {
+    public HomeResponseBean getHomeResponseBean() {
         return homeResponseBean;
     }
 
-    public void setHomeResponseBean(BaseBean<HomeResponseBean> homeResponseBean) {
+    public void setHomeResponseBean(HomeResponseBean homeResponseBean) {
         this.homeResponseBean = homeResponseBean;
     }
 

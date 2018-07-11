@@ -15,6 +15,6 @@ public interface HomeView {
     void onGetting(int type);
     void onGetFailed(int type);
     void onGetBannerSuccess(BannerResponse responseList);
-    void onGetArticalSuccess(BaseBean<HomeResponseBean> responseList);
+    void onGetArticalSuccess(HomeResponseBean responseList);
     LifecycleProvider getActivityLifeCycle();
 }

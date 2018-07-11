@@ -49,29 +49,19 @@ public class SplashActivity extends BaseActivity {
         postDelay();
         timeLimit();
     }
-//
-//
-////@Override
-////    public void initView() {
-////        postDelay();
-////
-////        try {
-////            e.printStackTrace();
-////        }
-//    }
 
     /**
      * 倒计时
      */
     private void timeLimit() {
-        Disposable subscribe = Flowable.intervalRange(2, 3, 0, 1, TimeUnit.SECONDS).
+        Disposable subscribe = Flowable.intervalRange(2, 2, 0, 1, TimeUnit.SECONDS).
                 compose(this.<Long>bindUntilEvent(ActivityEvent.DESTROY)).
                 map(new Function<Long, Integer>() {
 
                     @Override
                     public Integer apply(Long aLong) throws Exception {
                         int value = aLong.intValue();
-                        int i = 4 - value;
+                        int i = 3 - value;
                         return i;
                     }
                 }).doOnNext(new Consumer<Integer>() {
@@ -123,7 +113,7 @@ public class SplashActivity extends BaseActivity {
                 }
 
             }
-        }, 3000);
+        }, 2000);
     }
 
     private void toGuideActivity() {

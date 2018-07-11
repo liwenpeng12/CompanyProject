@@ -68,6 +68,10 @@ public abstract class BaseFragment<P extends BasePresenter> extends RxFragment{
     protected abstract P createPresenter();
 
 
+    public P getPresenter(){
+        return mPresenter;
+    }
+
     /**
      * 数据初始化
      * */

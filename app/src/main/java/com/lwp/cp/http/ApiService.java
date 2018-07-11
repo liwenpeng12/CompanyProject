@@ -28,7 +28,7 @@ public interface ApiService {
      *首页文章列表
      */
     @GET("article/list/{page}/json")
-    Observable<BaseBean<HomeResponseBean>> getHomeArtical(@Path("page") String path);
+    Observable<HomeResponseBean> getHomeArtical(@Path("page") String path);
 
     /**
      * 首页banner

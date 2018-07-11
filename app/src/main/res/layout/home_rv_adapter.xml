@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:lv="http://schemas.android.com/apk/res-auto"
+    android:padding="6dp"
+    android:layout_height="80dp">
+
+    <ImageView
+        android:id="@+id/iv_rv_pic"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:src="@mipmap/newpic"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:padding="5dp"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/iv_rv_pic"
+        android:orientation="vertical">
+    <TextView
+        android:id="@+id/tv_rv_title"
+        android:layout_width="wrap_content"
+        android:textSize="12sp"
+        android:singleLine="true"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/tv_rv_des"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:singleLine="true"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+    <TextView
+        android:id="@+id/tv_rv_author"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:textSize="12sp"
+        android:singleLine="true"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/tv_rv_date"
+        android:layout_width="0dp"
+        android:textSize="12sp"
+        android:singleLine="true"
+        android:layout_weight="1"
+        android:layout_height="wrap_content" />
+</LinearLayout>
+
+    </LinearLayout>
+    <com.lwp.cp.widget.LabelView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        lv:lv_background_color="#FF6666"
+        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true"
+        lv:lv_gravity="BOTTOM_RIGHT"
+        lv:lv_text="便签测试"
+        android:layout_alignParentRight="true"
+        lv:lv_fill_triangle ="true"
+        lv:lv_text_size="8dp"
+
+        />
+</RelativeLayout>

@@ -26,18 +26,20 @@ import io.reactivex.schedulers.Schedulers;
  * Descrobe:
  */
 public class HomePresenter extends BasePresenter<HomeView> {
+
+     int currentPage = 0;
     @Override
     protected void initData() {
         if (NetUtil.isNetworkConnected(BaseApplication.getmContext())) {
             getView().onGetting(Constant.LOADINGVIEW);
-            Observable<BaseBean<HomeResponseBean>> baseBeanObservable =
-                    Api.getApi().getHomeArtical("0").subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+            Observable<HomeResponseBean> baseBeanObservable =
+                    Api.getApi().getHomeArtical(""+currentPage).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
             Observable<BannerResponse> bannerResponseObservable =
                     Api.getApi().getBanner().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
             Disposable subscribe = Observable.zip(baseBeanObservable, bannerResponseObservable,
-                    new BiFunction<BaseBean<HomeResponseBean>, BannerResponse, ZipBannerArticalInfo>() {
+                    new BiFunction<HomeResponseBean, BannerResponse, ZipBannerArticalInfo>() {
                         @Override
-                        public ZipBannerArticalInfo apply(BaseBean<HomeResponseBean> homeResponseBeanBaseBean, BannerResponse bannerResponse) throws Exception {
+                        public ZipBannerArticalInfo apply(HomeResponseBean homeResponseBeanBaseBean, BannerResponse bannerResponse) throws Exception {
                             return new ZipBannerArticalInfo(homeResponseBeanBaseBean, bannerResponse);
                         }
                     }).observeOn(AndroidSchedulers.mainThread()).doOnNext(new Consumer<ZipBannerArticalInfo>() {
@@ -54,6 +56,7 @@ public class HomePresenter extends BasePresenter<HomeView> {
             }, new Consumer<Throwable>() {
                 @Override
                 public void accept(Throwable throwable) throws Exception {
+                    LogUtils.d("错误:"+throwable.toString());
                     getView().onGetFailed(Constant.ERRORVIEW);
                 }
             });
@@ -62,4 +65,78 @@ public class HomePresenter extends BasePresenter<HomeView> {
             getView().onGetFailed(Constant.NONETVIEW);
         }
     }
+
+   public void  refreshData(){
+       if (NetUtil.isNetworkConnected(BaseApplication.getmContext())) {
+           getView().onGetting(Constant.LOADINGVIEW);
+           Observable<HomeResponseBean> baseBeanObservable =
+                   Api.getApi().getHomeArtical("0").subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+           Observable<BannerResponse> bannerResponseObservable =
+                   Api.getApi().getBanner().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+           Disposable subscribe = Observable.zip(baseBeanObservable, bannerResponseObservable,
+                   new BiFunction<HomeResponseBean, BannerResponse, ZipBannerArticalInfo>() {
+                       @Override
+                       public ZipBannerArticalInfo apply(HomeResponseBean homeResponseBeanBaseBean, BannerResponse bannerResponse) throws Exception {
+                           return new ZipBannerArticalInfo(homeResponseBeanBaseBean, bannerResponse);
+                       }
+                   }).observeOn(AndroidSchedulers.mainThread()).doOnNext(new Consumer<ZipBannerArticalInfo>() {
+               @Override
+               public void accept(ZipBannerArticalInfo zipBannerArticalInfo) throws Exception {
+
+               }
+           }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<ZipBannerArticalInfo>() {
+               @Override
+               public void accept(ZipBannerArticalInfo zipBannerArticalInfo) throws Exception {
+                   getView().onGetArticalSuccess(zipBannerArticalInfo.getHomeResponseBean());
+                   getView().onGetBannerSuccess(zipBannerArticalInfo.getBannerResponse());
+               }
+           }, new Consumer<Throwable>() {
+               @Override
+               public void accept(Throwable throwable) throws Exception {
+                   LogUtils.d("错误:"+throwable.toString());
+                   getView().onGetFailed(Constant.ERRORVIEW);
+               }
+           });
+
+       }else {
+           getView().onGetFailed(Constant.NONETVIEW);
+       }
+   }
+
+   public void loadMoreData(int page){
+       if (NetUtil.isNetworkConnected(BaseApplication.getmContext())) {
+           getView().onGetting(Constant.LOADINGVIEW);
+           Observable<HomeResponseBean> baseBeanObservable =
+                   Api.getApi().getHomeArtical(""+page).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+           Observable<BannerResponse> bannerResponseObservable =
+                   Api.getApi().getBanner().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+           Disposable subscribe = Observable.zip(baseBeanObservable, bannerResponseObservable,
+                   new BiFunction<HomeResponseBean, BannerResponse, ZipBannerArticalInfo>() {
+                       @Override
+                       public ZipBannerArticalInfo apply(HomeResponseBean homeResponseBeanBaseBean, BannerResponse bannerResponse) throws Exception {
+                           return new ZipBannerArticalInfo(homeResponseBeanBaseBean, bannerResponse);
+                       }
+                   }).observeOn(AndroidSchedulers.mainThread()).doOnNext(new Consumer<ZipBannerArticalInfo>() {
+               @Override
+               public void accept(ZipBannerArticalInfo zipBannerArticalInfo) throws Exception {
+
+               }
+           }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<ZipBannerArticalInfo>() {
+               @Override
+               public void accept(ZipBannerArticalInfo zipBannerArticalInfo) throws Exception {
+                   getView().onGetArticalSuccess(zipBannerArticalInfo.getHomeResponseBean());
+                   getView().onGetBannerSuccess(zipBannerArticalInfo.getBannerResponse());
+               }
+           }, new Consumer<Throwable>() {
+               @Override
+               public void accept(Throwable throwable) throws Exception {
+                   LogUtils.d("错误:"+throwable.toString());
+                   getView().onGetFailed(Constant.ERRORVIEW);
+               }
+           });
+
+       }else {
+           getView().onGetFailed(Constant.NONETVIEW);
+       }
+   }
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    xmlns:lv="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal">
+    <TextView
+        android:id="@+id/tv_home_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:text="视图切换"/>
+    <ImageButton
+        android:id="@+id/ib_home_change"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="20dp"
+        android:src="@mipmap/ic_launcher"
+        />
+
+</RelativeLayout>
